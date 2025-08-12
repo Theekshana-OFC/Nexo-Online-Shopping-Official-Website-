@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexo Online Shopping</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000000; /* කළු පැහැති background ලෙස වෙනස් කරන ලදී */
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        .form-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            padding: 30px;
+            animation: fadeIn 0.5s ease-out;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .form-header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid rgba(234, 84, 85, 0.2);
+            padding-bottom: 20px;
+            animation: slideDown 0.5s ease-out;
+        }
+        .form-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(to right, #000000, #b24700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .form-description {
+            color: #000000;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .form-section {
+            margin-bottom: 25px;
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        .form-section:nth-child(1) { animation-delay: 0.1s; }
+        .form-section:nth-child(2) { animation-delay: 0.2s; }
+        .form-section:nth-child(3) { animation-delay: 0.3s; }
+        .form-section:nth-child(4) { animation-delay: 0.4s; }
+        .form-section:nth-child(5) { animation-delay: 0.5s; }
+        .question-title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+        }
+        .question-title:before {
+            content: "•";
+            color: #000000;
+            font-size: 24px;
+            margin-right: 8px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="url"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+            color: #333;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+            margin-bottom: 10px;
+        }
+        input:focus {
+            border-color: #000000;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(234, 84, 85, 0.1);
+            transform: scale(1.01);
+        }
+        .submit-btn {
+            background: linear-gradient(to right, #000000, #f07b3f);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 25px;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(234, 84, 85, 0.3);
+        }
+        .submit-btn:hover {
+            background: linear-gradient(to right, #f00000, #000000);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(234, 84, 85, 0.4);
+        }
+        .image-preview {
+            margin-top: 5px;
+        }
+        .image-preview img {
+            max-width: 180px;
+            max-height: 180px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            object-fit: cover;
+        }
+        .image-preview img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: #f07b3f;
+        }
+        .success-message {
+            background: linear-gradient(to right, #000000, #00662a);
+            color: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 25px;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+            animation: bounceIn 0.5s ease-out;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        #getImageUrlBtn {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(to right, #000000, #0068b1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(45, 152, 218, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #getImageUrlBtn:hover {
+            background: linear-gradient(to right, #000000, #ff0000);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 4px 15px rgba(234, 84, 85, 0.3); }
+            50% { transform: scale(1.02); box-shadow: 0 6px 20px rgba(234, 84, 85, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 4px 15px rgba(234, 84, 85, 0.3); }
+        }
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">ENTERING PRODUCT ENFORMATION</h1>
+            <p class="form-description">Please Fill in The Information about Your Item as Follows. all Fields Are Required. Supporter Theekshana 94778080044 </p>
+        </div>
+
+        <form id="productForm">
+            <div class="form-section">
+                <label class="question-title">Your Or Business Name</label>
+                <input type="text" name="yourName" required placeholder="">
+            </div>
+            <div class="form-section">
+                <label class="question-title">Name Of The Product</label>
+                <input type="text" name="productName" required placeholder="">
+            </div>
+            <div class="form-section">
+                <label class="question-title">Price Of The Product</label>
+                <input type="number" name="productPrice" required placeholder="">
+            </div>
+            <div class="form-section">
+                <label class="question-title">Your WhatsApp Number</label>
+                <input type="text" name="whatsappNumber" required placeholder="">
+            </div>
+            <div class="form-section">
+                <label class="question-title">Your Product 3 Imgurls</label>
+
+                <input type="url" name="imageUrl1" required placeholder="">
+                <div class="image-preview"><img id="preview1" style="display: none;"></div>
+
+                <input type="url" name="imageUrl2" placeholder="">
+                <div class="image-preview"><img id="preview2" style="display: none;"></div>
+
+                <input type="url" name="imageUrl3" placeholder="">
+                <div class="image-preview"><img id="preview3" style="display: none;"></div>
+                
+                
+
+                <button type="button" id="getImageUrlBtn">Get The ImgURL</button>
+            </div>
+            <button type="submit" class="submit-btn">𝗦𝗨𝗕𝗠𝗜𝗧 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡</button>
+            <div class="success-message" id="successMessage">
+                You Provided Has Been Successfully Saved.
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9L3XQKBsJqY8cOzVdNumbVa4Vq8QaOhE",
+            authDomain: "comments-system-e1416.firebaseapp.com",
+            databaseURL: "https://comments-system-e1416-default-rtdb.firebaseio.com",
+            projectId: "comments-system-e1416",
+            storageBucket: "comments-system-e1416.firebasestorage.app",
+            messagingSenderId: "437571712889",
+            appId: "1:437571712889:web:ed7e85b17d59404b55e1a8",
+            measurementId: "G-045QNTPL8M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const imageInputs = [
+            { input: document.querySelector('input[name="imageUrl1"]'), preview: document.getElementById('preview1') },
+            { input: document.querySelector('input[name="imageUrl2"]'), preview: document.getElementById('preview2') },
+            { input: document.querySelector('input[name="imageUrl3"]'), preview: document.getElementById('preview3') }
+        ];
+
+        imageInputs.forEach(({ input, preview }) => {
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    preview.src = this.value;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+        });
+
+        document.getElementById('getImageUrlBtn').addEventListener('click', function () {
+            window.open("https://imgur.com", "_blank");
+        });
+
+        const productForm = document.getElementById('productForm');
+        productForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const yourName = document.querySelector('input[name="yourName"]').value.trim();
+            const productName = document.querySelector('input[name="productName"]').value.trim();
+            const productPrice = document.querySelector('input[name="productPrice"]').value.trim();
+            const whatsappNumber = document.querySelector('input[name="whatsappNumber"]').value.trim();
+            const imageUrls = imageInputs.map(({ input }) => input.value.trim()).filter(url => url !== "");
+
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, "products"));
+
+            let newIndex = 1;
+            if (snapshot.exists()) {
+                newIndex = Object.keys(snapshot.val()).length + 1;
+            }
+
+            const productId = "product" + newIndex;
+
+            await set(ref(db, "products/" + productId), {
+                yourName,
+                name: productName,
+                price: productPrice,
+                imageUrls,
+                "whatsapp number": whatsappNumber,
+                timestamp: new Date().toISOString()
+            });
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            productForm.reset();
+            imageInputs.forEach(({ preview }) => preview.style.display = 'none');
+        });
+    </script>
+</body>
+</html>
