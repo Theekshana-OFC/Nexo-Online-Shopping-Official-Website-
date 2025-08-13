@@ -206,7 +206,7 @@
             </div>
             <div class="form-section">
                 <label class="question-title">Product Description</label>
-                <textarea name="productDescription" required placeholder="Enter detailed description about the product..."></textarea>
+                <textarea name="productDescription" required placeholder=""></textarea>
             </div>
             <div class="form-section">
                 <label class="question-title">Price Of The Product</label>
@@ -219,7 +219,7 @@
             <div class="form-section">
                 <label class="question-title">Your Product 3 Imgurls</label>
 
-                <input type="url" name="imageUrl1" required placeholder="">
+                <input type="url" name="imageUrl1" required placeholder="Example">
                 <div class="image-preview"><img id="preview1" style="display: none;"></div>
 
                 <input type="url" name="imageUrl2" placeholder="">
@@ -273,7 +273,7 @@
         });
 
         document.getElementById('getImageUrlBtn').addEventListener('click', function () {
-            window.open("https://imgur.com", "_blank");
+            window.open("https://freeimage.host/", "_blank");
         });
 
         const productForm = document.getElementById('productForm');
