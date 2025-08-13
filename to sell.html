@@ -55,6 +55,7 @@
         .form-section:nth-child(3) { animation-delay: 0.3s; }
         .form-section:nth-child(4) { animation-delay: 0.4s; }
         .form-section:nth-child(5) { animation-delay: 0.5s; }
+        .form-section:nth-child(6) { animation-delay: 0.6s; }
         .question-title {
             font-size: 16px;
             margin-bottom: 10px;
@@ -71,7 +72,8 @@
         }
         input[type="text"],
         input[type="number"],
-        input[type="url"] {
+        input[type="url"],
+        textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -82,8 +84,14 @@
             transition: all 0.3s ease;
             background-color: #f8f9fa;
             margin-bottom: 10px;
+            font-family: 'Arial', sans-serif;
         }
-        input:focus {
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        input:focus,
+        textarea:focus {
             border-color: #000000;
             background-color: #fff;
             outline: none;
@@ -197,6 +205,10 @@
                 <input type="text" name="productName" required placeholder="">
             </div>
             <div class="form-section">
+                <label class="question-title">Product Description</label>
+                <textarea name="productDescription" required placeholder="Enter detailed description about the product..."></textarea>
+            </div>
+            <div class="form-section">
                 <label class="question-title">Price Of The Product</label>
                 <input type="number" name="productPrice" required placeholder="">
             </div>
@@ -216,8 +228,6 @@
                 <input type="url" name="imageUrl3" placeholder="">
                 <div class="image-preview"><img id="preview3" style="display: none;"></div>
                 
-                
-
                 <button type="button" id="getImageUrlBtn">Get The ImgURL</button>
             </div>
             <button type="submit" class="submit-btn">𝗦𝗨𝗕𝗠𝗜𝗧 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡</button>
@@ -263,7 +273,7 @@
         });
 
         document.getElementById('getImageUrlBtn').addEventListener('click', function () {
-            window.open("https://freeimage.host/", "_blank");
+            window.open("https://imgur.com", "_blank");
         });
 
         const productForm = document.getElementById('productForm');
@@ -272,6 +282,7 @@
 
             const yourName = document.querySelector('input[name="yourName"]').value.trim();
             const productName = document.querySelector('input[name="productName"]').value.trim();
+            const productDescription = document.querySelector('textarea[name="productDescription"]').value.trim();
             const productPrice = document.querySelector('input[name="productPrice"]').value.trim();
             const whatsappNumber = document.querySelector('input[name="whatsappNumber"]').value.trim();
             const imageUrls = imageInputs.map(({ input }) => input.value.trim()).filter(url => url !== "");
@@ -289,6 +300,7 @@
             await set(ref(db, "products/" + productId), {
                 yourName,
                 name: productName,
+                description: productDescription,
                 price: productPrice,
                 imageUrls,
                 "whatsapp number": whatsappNumber,
