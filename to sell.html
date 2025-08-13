@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: #000000;
+            background: #000000; /* කළු පැහැති background ලෙස වෙනස් කරන ලදී */
             margin: 0;
             padding: 20px;
             color: #333;
@@ -72,7 +72,7 @@
         }
         input[type="text"],
         input[type="number"],
-        input[type="file"],
+        input[type="url"],
         textarea {
             width: 100%;
             padding: 12px 15px;
@@ -113,12 +113,12 @@
             animation: pulse 2s infinite;
             letter-spacing: 0.5px;
             text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(234, 84, 85, 0.3);
         }
         .submit-btn:hover {
-            background: linear-gradient(to right, #000000, #000000);
+            background: linear-gradient(to right, #f00000, #000000);
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(234, 84, 85, 0.4);
         }
         .image-preview {
             margin-top: 5px;
@@ -148,23 +148,25 @@
             animation: bounceIn 0.5s ease-out;
             box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
         }
-        .progress-container {
-            width: 100%;
-            background-color: #f1f1f1;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-        }
-        .progress-bar {
-            width: 0%;
-            height: 20px;
-            border-radius: 8px;
-            background: linear-gradient(to right, #000000, #00662a);
-            text-align: center;
-            line-height: 20px;
+        #getImageUrlBtn {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: linear-gradient(to right, #000000, #0068b1);
             color: white;
-            font-size: 12px;
-            transition: width 0.3s ease;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(45, 152, 218, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #getImageUrlBtn:hover {
+            background: linear-gradient(to right, #000000, #ff0000);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3);
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
@@ -189,22 +191,22 @@
 <body>
     <div class="form-container">
         <div class="form-header">
-            <h1 class="form-title">ENTERING PRODUCT INFORMATION</h1>
-            <p class="form-description">Please Fill Out The Information About Your Product as Below. All Fields are Mandatory. If You Need Assistance, Call Theekshana at 94778080044</p>
+            <h1 class="form-title">ENTERING PRODUCT ENFORMATION</h1>
+            <p class="form-description">Please Fill in The Information about Your Item as Follows. all Fields Are Required. Supporter Theekshana 94778080044 </p>
         </div>
 
         <form id="productForm">
             <div class="form-section">
-                <label class="question-title">Your or Business Name</label>
+                <label class="question-title">Your Or Business Name</label>
                 <input type="text" name="yourName" required placeholder="">
             </div>
             <div class="form-section">
-                <label class="question-title">Product Name</label>
+                <label class="question-title">Name Of The Product</label>
                 <input type="text" name="productName" required placeholder="">
             </div>
             <div class="form-section">
-                <label class="question-title">Product Details</label>
-                <textarea name="productDescription" required placeholder="නිෂ්පාදනය පිළිබඳ විස්තරාත්මක විස්තරය ඇතුළත් කරන්න..."></textarea>
+                <label class="question-title">Product Description</label>
+                <textarea name="productDescription" required placeholder=""></textarea>
             </div>
             <div class="form-section">
                 <label class="question-title">Price Of The Product</label>
@@ -215,40 +217,36 @@
                 <input type="text" name="whatsappNumber" required placeholder="">
             </div>
             <div class="form-section">
-                <label class="question-title">Image Of Your Product</label>
-                
-                <input type="file" name="productImage1" accept="image/*" class="image-upload">
+                <label class="question-title">Your Product 3 Imgurls</label>
+
+                <input type="url" name="imageUrl1" required placeholder="Example">
                 <div class="image-preview"><img id="preview1" style="display: none;"></div>
-                
-                <input type="file" name="productImage2" accept="image/*" class="image-upload">
+
+                <input type="url" name="imageUrl2" placeholder="">
                 <div class="image-preview"><img id="preview2" style="display: none;"></div>
-                
-                <input type="file" name="productImage3" accept="image/*" class="image-upload">
+
+                <input type="url" name="imageUrl3" placeholder="">
                 <div class="image-preview"><img id="preview3" style="display: none;"></div>
                 
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar" id="progressBar">0%</div>
-                </div>
+                <button type="button" id="getImageUrlBtn">Get The ImgURL</button>
             </div>
-            <button type="submit" class="submit-btn" id="submitBtn">Present The Information</button>
+            <button type="submit" class="submit-btn">𝗦𝗨𝗕𝗠𝗜𝗧 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡</button>
             <div class="success-message" id="successMessage">
-                The Information You Provided Has Been Successfully Saved.
+                You Provided Has Been Successfully Saved.
             </div>
         </form>
     </div>
 
     <script type="module">
-        // Firebase ආරම්භ කිරීම
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB9L3XQKBsJqY8cOzVdNumbVa4Vq8QaOhE",
             authDomain: "comments-system-e1416.firebaseapp.com",
             databaseURL: "https://comments-system-e1416-default-rtdb.firebaseio.com",
             projectId: "comments-system-e1416",
-            storageBucket: "comments-system-e1416.appspot.com",
+            storageBucket: "comments-system-e1416.firebasestorage.app",
             messagingSenderId: "437571712889",
             appId: "1:437571712889:web:ed7e85b17d59404b55e1a8",
             measurementId: "G-045QNTPL8M"
@@ -256,111 +254,66 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const storage = getStorage(app);
 
-        // රූප පෙරදසුන පෙන්වීම
-        document.querySelectorAll('.image-upload').forEach((upload, index) => {
-            upload.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        const previewId = 'preview' + (index + 1);
-                        const preview = document.getElementById(previewId);
-                        preview.src = event.target.result;
-                        preview.style.display = 'block';
-                    }
-                    reader.readAsDataURL(file);
+        const imageInputs = [
+            { input: document.querySelector('input[name="imageUrl1"]'), preview: document.getElementById('preview1') },
+            { input: document.querySelector('input[name="imageUrl2"]'), preview: document.getElementById('preview2') },
+            { input: document.querySelector('input[name="imageUrl3"]'), preview: document.getElementById('preview3') }
+        ];
+
+        imageInputs.forEach(({ input, preview }) => {
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    preview.src = this.value;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
                 }
             });
         });
 
-        // පෝරමය ඉදිරිපත් කිරීම
+        document.getElementById('getImageUrlBtn').addEventListener('click', function () {
+            window.open("https://freeimage.host/", "_blank");
+        });
+
         const productForm = document.getElementById('productForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const successMessage = document.getElementById('successMessage');
-        
         productForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = "පූරණය වෙමින් පවතී...";
-            progressContainer.style.display = 'block';
-            
-            const formData = {
-                yourName: document.querySelector('input[name="yourName"]').value.trim(),
-                productName: document.querySelector('input[name="productName"]').value.trim(),
-                productDescription: document.querySelector('textarea[name="productDescription"]').value.trim(),
-                productPrice: document.querySelector('input[name="productPrice"]').value.trim(),
-                whatsappNumber: document.querySelector('input[name="whatsappNumber"]').value.trim(),
-                timestamp: new Date().toISOString()
-            };
-            
-            // රූප උඩුගත කිරීම සහ URL ලබා ගැනීම
-            const imageFiles = Array.from(document.querySelectorAll('.image-upload')).map(input => input.files[0]).filter(file => file);
-            const imageUrls = [];
-            
-            try {
-                // සියලුම රූප උඩුගත කරන්න
-                for (let i = 0; i < imageFiles.length; i++) {
-                    const file = imageFiles[i];
-                    const fileName = Date.now() + '_' + file.name;
-                    const storageReference = storageRef(storage, 'product_images/' + fileName);
-                    
-                    const uploadTask = uploadBytesResumable(storageReference, file);
-                    
-                    // ප්‍රගතිය අධීක්ෂණය කරන්න
-                    await new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed',
-                            (snapshot) => {
-                                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                progressBar.style.width = progress + '%';
-                                progressBar.textContent = Math.round(progress) + '%';
-                            },
-                            (error) => {
-                                reject(error);
-                            },
-                            async () => {
-                                const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                                imageUrls.push(downloadURL);
-                                resolve();
-                            }
-                        );
-                    });
-                }
-                
-                // රූප URL එකතු කරන්න
-                formData.imageUrls = imageUrls;
-                
-                // Firebase Realtime Database එකට දත්ත සුරකින්න
-                const newProductRef = push(ref(db, 'products'));
-                await set(newProductRef, formData);
-                
-                // සාර්ථක පණිවිඩය පෙන්වන්න
-                successMessage.style.display = 'block';
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
-                
-                // පෝරමය යළි පිහිටුවන්න
-                productForm.reset();
-                document.querySelectorAll('.image-preview img').forEach(img => {
-                    img.style.display = 'none';
-                    img.src = '';
-                });
-                progressContainer.style.display = 'none';
-                progressBar.style.width = '0%';
-                progressBar.textContent = '0%';
-                
-            } catch (error) {
-                console.error("දෝෂයක් ඇතිවිය:", error);
-                alert("දෝෂයක් ඇතිවිය! කරුණාකර නැවත උත්සාහ කරන්න: " + error.message);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = "තොරතුරු ඉදිරිපත් කරන්න";
+
+            const yourName = document.querySelector('input[name="yourName"]').value.trim();
+            const productName = document.querySelector('input[name="productName"]').value.trim();
+            const productDescription = document.querySelector('textarea[name="productDescription"]').value.trim();
+            const productPrice = document.querySelector('input[name="productPrice"]').value.trim();
+            const whatsappNumber = document.querySelector('input[name="whatsappNumber"]').value.trim();
+            const imageUrls = imageInputs.map(({ input }) => input.value.trim()).filter(url => url !== "");
+
+            const dbRef = ref(db);
+            const snapshot = await get(child(dbRef, "products"));
+
+            let newIndex = 1;
+            if (snapshot.exists()) {
+                newIndex = Object.keys(snapshot.val()).length + 1;
             }
+
+            const productId = "product" + newIndex;
+
+            await set(ref(db, "products/" + productId), {
+                yourName,
+                name: productName,
+                description: productDescription,
+                price: productPrice,
+                imageUrls,
+                "whatsapp number": whatsappNumber,
+                timestamp: new Date().toISOString()
+            });
+
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+
+            productForm.reset();
+            imageInputs.forEach(({ preview }) => preview.style.display = 'none');
         });
     </script>
 </body>
