@@ -238,8 +238,9 @@
     </div>
 
     <script type="module">
+        // Firebase ආරම්භ කිරීම
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+        import { getDatabase, ref, set, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
         import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -258,14 +259,14 @@
         const storage = getStorage(app);
 
         // රූප පෙරදසුන පෙන්වීම
-        const imageUploads = document.querySelectorAll('.image-upload');
-        imageUploads.forEach((upload, index) => {
+        document.querySelectorAll('.image-upload').forEach((upload, index) => {
             upload.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
-                        const preview = document.getElementById(preview${index + 1});
+                        const previewId = 'preview' + (index + 1);
+                        const preview = document.getElementById(previewId);
                         preview.src = event.target.result;
                         preview.style.display = 'block';
                     }
@@ -279,6 +280,7 @@
         const submitBtn = document.getElementById('submitBtn');
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
+        const successMessage = document.getElementById('successMessage');
         
         productForm.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -287,22 +289,25 @@
             submitBtn.textContent = "පූරණය වෙමින් පවතී...";
             progressContainer.style.display = 'block';
             
-            const yourName = document.querySelector('input[name="yourName"]').value.trim();
-            const productName = document.querySelector('input[name="productName"]').value.trim();
-            const productDescription = document.querySelector('textarea[name="productDescription"]').value.trim();
-            const productPrice = document.querySelector('input[name="productPrice"]').value.trim();
-            const whatsappNumber = document.querySelector('input[name="whatsappNumber"]').value.trim();
+            const formData = {
+                yourName: document.querySelector('input[name="yourName"]').value.trim(),
+                productName: document.querySelector('input[name="productName"]').value.trim(),
+                productDescription: document.querySelector('textarea[name="productDescription"]').value.trim(),
+                productPrice: document.querySelector('input[name="productPrice"]').value.trim(),
+                whatsappNumber: document.querySelector('input[name="whatsappNumber"]').value.trim(),
+                timestamp: new Date().toISOString()
+            };
             
             // රූප උඩුගත කිරීම සහ URL ලබා ගැනීම
             const imageFiles = Array.from(document.querySelectorAll('.image-upload')).map(input => input.files[0]).filter(file => file);
-            let imageUrls = [];
+            const imageUrls = [];
             
             try {
                 // සියලුම රූප උඩුගත කරන්න
                 for (let i = 0; i < imageFiles.length; i++) {
                     const file = imageFiles[i];
-                    const fileName = ${Date.now()}_${file.name};
-                    const storageReference = storageRef(storage, product_images/${fileName});
+                    const fileName = Date.now() + '_' + file.name;
+                    const storageReference = storageRef(storage, 'product_images/' + fileName);
                     
                     const uploadTask = uploadBytesResumable(storageReference, file);
                     
@@ -311,8 +316,8 @@
                         uploadTask.on('state_changed',
                             (snapshot) => {
                                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                progressBar.style.width = ${progress}%;
-                                progressBar.textContent = ${Math.round(progress)}%;
+                                progressBar.style.width = progress + '%';
+                                progressBar.textContent = Math.round(progress) + '%';
                             },
                             (error) => {
                                 reject(error);
@@ -326,44 +331,32 @@
                     });
                 }
                 
-                // දත්ත සමුදායේ නව අංකය ලබා ගන්න
-                const dbRef = ref(db);
-                const snapshot = await get(child(dbRef, "products"));
+                // රූප URL එකතු කරන්න
+                formData.imageUrls = imageUrls;
                 
-                let newIndex = 1;
-                if (snapshot.exists()) {
-                    newIndex = Object.keys(snapshot.val()).length + 1;
-                }
-                
-                const productId = "product" + newIndex;
-                
-                // දත්ත සමුදායට තොරතුරු සුරකින්න
-                await set(ref(db, "products/" + productId), {
-                    yourName,
-                    name: productName,
-                    description: productDescription,
-                    price: productPrice,
-                    imageUrls,
-                    "whatsapp number": whatsappNumber,
-                    timestamp: new Date().toISOString()
-                });
+                // Firebase Realtime Database එකට දත්ත සුරකින්න
+                const newProductRef = push(ref(db, 'products'));
+                await set(newProductRef, formData);
                 
                 // සාර්ථක පණිවිඩය පෙන්වන්න
-                document.getElementById('successMessage').style.display = 'block';
+                successMessage.style.display = 'block';
                 setTimeout(() => {
-                    document.getElementById('successMessage').style.display = 'none';
+                    successMessage.style.display = 'none';
                 }, 3000);
                 
                 // පෝරමය යළි පිහිටුවන්න
                 productForm.reset();
-                document.querySelectorAll('.image-preview img').forEach(img => img.style.display = 'none');
+                document.querySelectorAll('.image-preview img').forEach(img => {
+                    img.style.display = 'none';
+                    img.src = '';
+                });
                 progressContainer.style.display = 'none';
                 progressBar.style.width = '0%';
                 progressBar.textContent = '0%';
                 
             } catch (error) {
                 console.error("දෝෂයක් ඇතිවිය:", error);
-                alert("දෝෂයක් ඇතිවිය! කරුණාකර නැවත උත්සාහ කරන්න.");
+                alert("දෝෂයක් ඇතිවිය! කරුණාකර නැවත උත්සාහ කරන්න: " + error.message);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = "තොරතුරු ඉදිරිපත් කරන්න";
